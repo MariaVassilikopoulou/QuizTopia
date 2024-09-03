@@ -18,7 +18,7 @@ function QuizList() {
         }
 
         // Fetch userId
-        const userIdResponse = await fetch(`${BASE_URL}/account`, {
+       /* const userIdResponse = await fetch(`${BASE_URL}/account`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -29,26 +29,29 @@ function QuizList() {
           throw new Error('Failed to fetch user details');
         }
         const userIdData = await userIdResponse.json();
-        const userId = userIdData.account.userId;
+        const userId = userIdData.account.userId;*/
         
         // Fetch quizzes
-        const quizzesResponse = await fetch(`${BASE_URL}/quizzes`, {
+        const response = await fetch(`${BASE_URL}/quiz`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
         });
-        if (!quizzesResponse.ok) {
+        if (!response.ok) {
           throw new Error('Failed to fetch quizzes');
         }
-        const quizzesData = await quizzesResponse.json();
-        if (quizzesData.success) {
-          setQuizzes(quizzesData.quizzes || []); // Set the fetched quizzes in state
+        const data = await response.json();
+        console.log('Fetched quizzes:', data);
+
+        if (data.success && Array.isArray(data.quizzes)) {
+          setQuizzes(data.quizzes);
         } else {
-          throw new Error('API response error');
+          throw new Error('Unexpected API response structure');
         }
       } catch (err) {
+        console.error('Error fetching quizzes:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -57,6 +60,7 @@ function QuizList() {
 
     fetchQuizzes();
   }, []);
+
 
   const handleShowQuiz = (quizId) => {
     // Navigate to the quiz detail page with the quizId

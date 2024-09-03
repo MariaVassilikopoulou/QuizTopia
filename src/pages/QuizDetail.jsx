@@ -9,18 +9,20 @@ function QuizDetail() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [userId, setUserId] = useState("");
+  const [latitude, setLatitude]= useState("");
+  const [longitude, setLongitude]= useState("");
   // const [loading, setLoading] = useState(true);
   // const [error, setError] = useState(null);
 
   // to do: add longitude and latitude
-  const addQuestionHandler = async () => {
+  /*const addQuestionHandler = async () => {
     let newQuestion = {
       name: quizId,
       question: question,
       answer: answer,
       location: {
-        longitude: "",
-        latitude: "",
+        longitude: longitude,
+        latitude: latitude,
       },
     };
     console.log(newQuestion);
@@ -53,63 +55,91 @@ function QuizDetail() {
       } catch (err) {
         console.error("Failed to fetch quiz details:", err);
       }
+      
     };
 
     fetchQuizDetails();
   }, [userId]);
 
-  // const handleSaveQuestion = async () => {
 
-  //   const newQuestion = {
-  //     question: question,
-  //     answer: answer,
-  //     location: { latitude: '', longitude: '' },
-  //   };
-
-  //   try {
-  //     const token = sessionStorage.getItem('token');
-  //     const userId = sessionStorage.getItem('userId');
-  //     if (!token) {
-  //       throw new Error('No authentication token found');
-  //     }
-
-  //     if (!userId) {
-  //       throw new Error('No user ID found');
-  //     }
-
-  //     await addQuestionToQuiz(newQuestion, token);
-  //     const updatedQuiz = await getQuizDetails(userId, quizId, token);
-  //     setQuestions(updatedQuiz.quiz?.questions || []);
-  //     setQuestion('');
-  //     setAnswer('');
-  //   } catch (err) {
-  //     console.error('Error saving question:', err);
-  //     setError(err.message);
-  //   }
-  // };
 
   const handleMapClick = (coords) => {
-    const index = questions.findIndex(
-      (q) => q.location.latitude === "" && q.location.longitude === ""
-    );
-    if (index !== -1) {
-      const updatedQuestions = [...questions];
-      updatedQuestions[index] = {
-        ...updatedQuestions[index],
-        location: coords,
-      };
-      setQuestions(updatedQuestions);
-      console.log(questions);
+   setLatitude(latitude);
+   setLatitude(longitude);
+  };*/
+
+  const addQuestionHandler = async () => {
+    if (!latitude || !longitude) {
+      alert("Please click on the map to select a location.");
+      return;
+    }
+
+    if (!question || !answer) {
+      alert("Please enter both a question and an answer.");
+      return;
+    }
+
+    let newQuestion = {
+      name: quizId,
+      question: question,
+      answer: answer,
+      location: {
+        longitude: longitude,
+        latitude: latitude,
+      },
+    };
+
+    console.log("Adding Question:", newQuestion);
+    
+    const token = sessionStorage.getItem("token");
+    try {
+      const data = await addQuestionToQuiz(newQuestion, token);
+      console.log("Response:", data);
+
+      setQuestions((prevQuestions) => [
+        ...prevQuestions,
+        {
+          text: question,
+          answer: answer,
+          coords: { latitude, longitude },
+        },
+      ]);
+      setQuestion("");
+      setAnswer("");
+    } catch (error) {
+      console.error("Failed to add question:", error);
     }
   };
 
-  // if (loading) {
-  //   return <div>Loading quiz details...</div>;
-  // }
+  useEffect(() => {
+    const fetchQuizDetails = async () => {
+      console.log("Fetching Quiz Details for:", quizId);
 
-  // if (error) {
-  //   return <div>Error: {error}</div>;
-  // }
+      try {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+          console.error("No token found in session storage.");
+          return;
+        }
+
+        const quizData = await getQuizDetails(userId, quizId);
+        setQuestions(quizData.quiz.Attributes.questions || []);
+        setQuestion("");
+        setAnswer("");
+      } catch (err) {
+        console.error("Failed to fetch quiz details:", err);
+      }
+    };
+
+    if (userId) {
+      fetchQuizDetails();
+    }
+  }, [userId]);
+
+  const handleMapClick = (coords) => {
+    setLatitude(coords.latitude);
+    setLongitude(coords.longitude);
+  };
 
   return (
     <div>
@@ -134,6 +164,6 @@ function QuizDetail() {
       <MapComponent questions={questions} onMapClick={handleMapClick} />
     </div>
   );
-}
 
+}
 export default QuizDetail;

@@ -13,13 +13,16 @@ const MapComponent = ({ questions, onMapClick }) => {
         setPosition(position.coords);
       });
     }
+    console.log("EDWEDW:", position)
   };
+
+  
 
   useEffect(() => {
     if (position) {
       if (!map) {
         const myMap = leaflet.map('map').setView([position.latitude, position.longitude], 15);
-
+console.log("edw:", myMap);
         leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
           attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -30,10 +33,10 @@ const MapComponent = ({ questions, onMapClick }) => {
         myMap.on('click', (event) => {
           const { lat, lng } = event.latlng;
           onMapClick({ latitude: lat.toString(), longitude: lng.toString() });
-
+          console.log("Clicked Coordinates:",lat,lng);
           // Add marker and popup at clicked position
           const marker = leaflet.marker([lat, lng]).addTo(myMap);
-          marker.bindPopup('Click to add question').openPopup();
+         marker.bindPopup('Click to add question').openPopup();
         });
 
         // Add markers for existing questions
@@ -62,3 +65,32 @@ const MapComponent = ({ questions, onMapClick }) => {
 };
 
 export default MapComponent;
+//const handleSaveQuestion = async () => {
+
+  //   const newQuestion = {
+  //     question: question,
+  //     answer: answer,
+  //     location: { latitude: '', longitude: '' },
+  //   };
+
+  //   try {
+  //     const token = sessionStorage.getItem('token');
+  //     const userId = sessionStorage.getItem('userId');
+  //     if (!token) {
+  //       throw new Error('No authentication token found');
+  //     }
+
+  //     if (!userId) {
+  //       throw new Error('No user ID found');
+  //     }
+
+  //     await addQuestionToQuiz(newQuestion, token);
+  //     const updatedQuiz = await getQuizDetails(userId, quizId, token);
+  //     setQuestions(updatedQuiz.quiz?.questions || []);
+  //     setQuestion('');
+  //     setAnswer('');
+  //   } catch (err) {
+  //     console.error('Error saving question:', err);
+  //     setError(err.message);
+  //   }
+  // };
