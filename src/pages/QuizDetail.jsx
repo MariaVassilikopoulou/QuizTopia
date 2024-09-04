@@ -9,64 +9,8 @@ function QuizDetail() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [userId, setUserId] = useState("");
-  const [latitude, setLatitude]= useState("");
-  const [longitude, setLongitude]= useState("");
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
-
-  // to do: add longitude and latitude
-  /*const addQuestionHandler = async () => {
-    let newQuestion = {
-      name: quizId,
-      question: question,
-      answer: answer,
-      location: {
-        longitude: longitude,
-        latitude: latitude,
-      },
-    };
-    console.log(newQuestion);
-    const token = sessionStorage.getItem("token");
-    const data = await addQuestionToQuiz(newQuestion, token);
-    console.log(data);
-    sessionStorage.setItem("userId", userId);
-    setUserId(data.quiz.Attributes.userId);
-  };
-
-  useEffect(() => {
-    const fetchQuizDetails = async () => {
-      console.log(quizId);
-      console.log(userId);
-
-      try {
-        const token = sessionStorage.getItem("token");
-        if (!token) {
-          return;
-        }
-
-        if (!userId) {
-          return;
-        }
-
-        const quizData = await getQuizDetails(userId, quizId);
-        setQuestions(quizData.quiz.Attributes.questions || []);
-        setQuestion("");
-        setAnswer("");
-      } catch (err) {
-        console.error("Failed to fetch quiz details:", err);
-      }
-      
-    };
-
-    fetchQuizDetails();
-  }, [userId]);
-
-
-
-  const handleMapClick = (coords) => {
-   setLatitude(latitude);
-   setLatitude(longitude);
-  };*/
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
 
   const addQuestionHandler = async () => {
     if (!latitude || !longitude) {
@@ -79,6 +23,14 @@ function QuizDetail() {
       return;
     }
 
+    const token = sessionStorage.getItem("token");
+    const currentUserId = sessionStorage.getItem("userId");
+
+    if (!token || !currentUserId) {
+      console.error("Missing token or userId when adding question.");
+      return;
+    }
+
     let newQuestion = {
       name: quizId,
       question: question,
@@ -89,9 +41,6 @@ function QuizDetail() {
       },
     };
 
-    console.log("Adding Question:", newQuestion);
-    
-    const token = sessionStorage.getItem("token");
     try {
       const data = await addQuestionToQuiz(newQuestion, token);
       console.log("Response:", data);
@@ -99,9 +48,9 @@ function QuizDetail() {
       setQuestions((prevQuestions) => [
         ...prevQuestions,
         {
-          text: question,
+          question: question,
           answer: answer,
-          coords: { latitude, longitude },
+          location: { latitude, longitude },
         },
       ]);
       setQuestion("");
@@ -113,17 +62,18 @@ function QuizDetail() {
 
   useEffect(() => {
     const fetchQuizDetails = async () => {
-      console.log("Fetching Quiz Details for:", quizId);
+      const token = sessionStorage.getItem("token");
+      const storedUserId = sessionStorage.getItem("userId");
+
+      if (!token || !storedUserId) {
+        console.error("No token or userId found in session storage.");
+        return;
+      }
 
       try {
-        const token = sessionStorage.getItem("token");
-        if (!token) {
-          console.error("No token found in session storage.");
-          return;
-        }
-
-        const quizData = await getQuizDetails(userId, quizId);
-        setQuestions(quizData.quiz.Attributes.questions || []);
+        const quizData = await getQuizDetails(storedUserId, quizId);
+        setQuestions(quizData.quiz.questions || []);
+        setUserId(storedUserId);
         setQuestion("");
         setAnswer("");
       } catch (err) {
@@ -131,10 +81,8 @@ function QuizDetail() {
       }
     };
 
-    if (userId) {
-      fetchQuizDetails();
-    }
-  }, [userId]);
+    fetchQuizDetails();
+  }, [quizId]);
 
   const handleMapClick = (coords) => {
     setLatitude(coords.latitude);
@@ -158,12 +106,10 @@ function QuizDetail() {
           onChange={(e) => setAnswer(e.target.value)}
         />
         <button onClick={addQuestionHandler}>Add question</button>
-        {/* <button onClick={handleSaveQuestion}>Save Question</button> */}
       </div>
-      {/* Render the MapComponent with questions and callback to handle map clicks */}
       <MapComponent questions={questions} onMapClick={handleMapClick} />
     </div>
   );
-
 }
+
 export default QuizDetail;

@@ -1,3 +1,5 @@
+import { jwtDecode } from 'jwt-decode';
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SecretTunnel from "./SecretTunnel"; 
@@ -25,8 +27,15 @@ export default function Login() {
                 throw new Error('Login request failed');
             }
             const data = await response.json();
+            console.log("Login API response data:", data);
+
+            const decodedToken = jwtDecode(data.token);
+            const userId = decodedToken.id; 
+
             sessionStorage.setItem('token', data.token);
-            sessionStorage.setItem('userId', userData.username);
+            sessionStorage.setItem('userId', userId);
+
+            console.log("Logged in userId:", userId);
             setLoggedIn(true); 
             navigate('/create'); 
         } catch (error) {

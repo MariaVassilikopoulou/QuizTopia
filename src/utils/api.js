@@ -104,12 +104,19 @@ export const fetchUserId = async (token) => {
 
 
 export const getQuizDetails = async (userId, quizId) => {
-  
+  console.log(`Fetching quiz details with userId: ${userId}, quizId: ${quizId}`);
   try {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      throw new Error('No token found in session storage.');
+    }
+
+  
     const response = await fetch(`https://fk7zu3f4gj.execute-api.eu-north-1.amazonaws.com/quiz/${userId}/${quizId}`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
     });
     if (!response.ok) {
@@ -138,15 +145,14 @@ export const addQuestionToQuiz = async (questionData, token) => {
       },
       body: JSON.stringify(questionData),
     });
-    if (!response.ok) {
-      const responseBody = await response.text();
-      console.error('Error response from server:', responseBody);
-      throw new Error('Failed to fetch quiz details');
-    }
     const data = await response.json();
-    return await data;
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to add question');
+    }
+
+    return data;
   } catch (error) {
-    console.error('Error fetching quiz details:', error);
+    console.error('Error adding question:', error);
     throw error;
   }
-};
+}
