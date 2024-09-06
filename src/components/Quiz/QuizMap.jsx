@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { getQuizDetails } from '../../utils/api'; // Import your API functions
+import { getQuizDetails } from '../../utils/api'; 
 
 function QuizMap() {
   const { quizId } = useParams();
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [mapCenter, setMapCenter] = useState([59.3293, 18.0686]); // Default center (Stockholm)
+  const [mapCenter, setMapCenter] = useState([59.3293, 18.0686]); 
 
   useEffect(() => {
     const fetchQuizDetails = async () => {

@@ -45,28 +45,35 @@ export default function Login() {
     }
 
     return (
+        <div className="page-container">
         <article>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Användarnamn:
+            <form onSubmit={handleSubmit} className="create-account-form">
+                <label className="form-label" >
+                   
                     <input
+                    placeholder='Username'
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                     className="form-input"
+
                     />
                 </label>
-                <label>
-                    Lösenord:
+                <label className="form-label">
+                  
                     <input
+                    placeholder='Password'
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        className="form-input"
                     />
                 </label>
-                <button type="submit">Logga in</button>
+                <button type="submit" className="submit-btn">Logga in</button>
             </form>
             {loggedIn && <SecretTunnel />}
-            {loginError && <p>{loginError}</p>}
+            {loginError && <p className="error-text">{loginError}</p>}
         </article>
+        </div>
     );
 }

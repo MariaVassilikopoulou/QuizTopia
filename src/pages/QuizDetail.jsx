@@ -1,5 +1,5 @@
-import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect} from "react";
 import MapComponent from "../components/Map/MapComponent";
 import { getQuizDetails, addQuestionToQuiz } from "../utils/api";
 
@@ -12,6 +12,7 @@ function QuizDetail() {
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
 
+const navigate= useNavigate();
   const addQuestionHandler = async () => {
     if (!latitude || !longitude) {
       alert("Please click on the map to select a location.");
@@ -89,25 +90,35 @@ function QuizDetail() {
     setLongitude(coords.longitude);
   };
 
+  const handleNavigateToQuizes= ()=>{
+    navigate("/quizes");
+  };
   return (
-    <div>
-      <h1>Quiz Details</h1>
-      <div>
-        <input
+    <div className="detail-page">
+      
+      <div className="quiz-details">
+        <input 
+          className="form-input"
           type="text"
           placeholder="Question"
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
         />
         <input
+        className="form-input"
           type="text"
           placeholder="Answer"
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
         />
-        <button onClick={addQuestionHandler}>Add question</button>
+        <button className="submit-btn" onClick={addQuestionHandler}>Add question</button>
+        <button  className="submit-btn" onClick={handleNavigateToQuizes}>Quizes</button>
       </div>
+      
+      <div className="themap">
       <MapComponent questions={questions} onMapClick={handleMapClick} />
+      </div>
+    
     </div>
   );
 }

@@ -134,7 +134,7 @@ export const getQuizDetails = async (userId, quizId) => {
 
 
 
-// Add question to quiz function
+
 export const addQuestionToQuiz = async (questionData, token) => {
   try {
     const response = await fetch('https://fk7zu3f4gj.execute-api.eu-north-1.amazonaws.com/quiz/question', {

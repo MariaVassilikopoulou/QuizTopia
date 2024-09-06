@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchQuizzes } from '../utils/api'; // Ensure this function is updated to match your API
+import { fetchQuizzes } from '../utils/api'; 
 
 function QuizList() {
   const [quizzes, setQuizzes] = useState([]);
@@ -11,7 +11,7 @@ function QuizList() {
   useEffect(() => {
     const fetchQuizzesData = async () => {
       try {
-        const data = await fetchQuizzes(); // Call the API function to fetch quizzes
+        const data = await fetchQuizzes(); 
         if (data.success) {
           setQuizzes(data.quizzes || []);
         } else {
@@ -40,17 +40,24 @@ function QuizList() {
   }
 
   return (
-    <div>
-      <h1>All Quizzes</h1>
-      <ul>
+    
+    <div className="page-container">
+   
+        <article >
+      
+      <ul className="quiz-grid" >
+    
         {quizzes.map((quiz) => (
-          <li key={quiz.quizId}>
-            <strong>{quiz.quizId || 'Unnamed Quiz'}</strong> - Created by {quiz.username || 'Unknown User'}
-            <button onClick={() => handleShowQuiz(quiz.quizId)}>Show Quiz</button>
+          
+          <li className="quiz-item create-account-form" key={quiz.quizId}>
+          <h3>Quiz</h3>
+          <strong >Name:{quiz.quizId || 'Unnamed Quiz'}</strong><strong style={{ padding: '23px' }}>  By: {quiz.username || 'Unknown User'}</strong>
+            <button className="submit-btn" onClick={() => handleShowQuiz(quiz.quizId)}>Show Quiz</button>
           </li>
         ))}
       </ul>
-    </div>
+      </article>
+      </div>
   );
 }
 

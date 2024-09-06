@@ -1,14 +1,18 @@
 import { useState } from "react";
 
+import "../../App.css"
 export default function CreateAccount() {
    
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null); 
-    
+    const [successful, setSuccessful]= useState(null);
+
     const handleSubmit = async (event) => {
         event.preventDefault(); 
 
+
+       
         const userData = { username, password };
         
         try {
@@ -31,33 +35,46 @@ export default function CreateAccount() {
             const data = await response.json();
             console.log('Account created successfully:', data);
             setError(null);
+            setSuccessful("Account successfully created!");
+            setUsername(''); 
+            setPassword('');
         } catch (error) {
             console.error('Error creating account:', error);
       setError(error.message);
+      setSuccessful(null);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <label>
-                Användarnamn:
-                <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)} 
-                />
-            </label>
-            <label>
-                Lösenord:
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)} 
-                />
-            </label>
-            <button type="submit">Create Account</button>
+        <div className="page-container">
+        <article>
+        <form onSubmit={handleSubmit} className="create-account-form">
+        <label className="form-label">
+           
+            <input
+            placeholder="Username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)} 
+                className="form-input"
+            />
+        </label>
+        <label className="form-label">
+          
+            <input
+            placeholder="Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)} 
+                className="form-input"
+            />
+        </label>
+        <button type="submit" className="submit-btn">Create Account</button>
 
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-        </form>
-    );
+        {error && <p className="error-text">{error}</p>}
+        {successful && <p className="error-text">{successful}</p>}
+    </form>
+    </article>
+    </div>
+);
 }

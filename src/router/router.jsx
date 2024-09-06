@@ -4,7 +4,7 @@ import Dashboard from '../pages/Dashboard'
 import QuizDetail from '../pages/QuizDetail'
 import QuizList from '../pages/QuizList'
 //import MapComponent from "../components/Map/MapComponent";
-import CreateAccount from "../components/Auth/CreateAccount";
+//import CreateAccount from "../components/Auth/CreateAccount";
 //import SecretTunnel from "../components/Auth/SecretTunnel";
 import QuizMap from '../components/Quiz/QuizMap'
 const router= createBrowserRouter([
@@ -27,11 +27,8 @@ const router= createBrowserRouter([
     {
         path:"/quiz/:quizId",
         element: <QuizMap /> 
-    },
-    {
-        path: "/signup",
-        element: <CreateAccount /> 
     }
+    
 ])
 
 export default router;  

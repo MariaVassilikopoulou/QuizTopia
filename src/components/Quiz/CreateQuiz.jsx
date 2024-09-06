@@ -50,20 +50,24 @@ function CreateQuiz() {
   };
 
   return (
-    <div>
-      <h2>Create a New Quiz</h2>
+    <div className="page-container">
+        <article className="create-account-form">
+    
       <input
         type="text"
         placeholder="Name your Quiz"
         value={quizName}
         onChange={handleInputChange}
         disabled={loading}  
+         className="form-input"
       />
-      <button onClick={handleCreateQuiz} disabled={loading}>
+      <button onClick={handleCreateQuiz} disabled={loading} className="submit-btn">
         {loading ? 'Creating...' : 'Create Quiz'}
       </button>
 
-      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+      {error && <p  className="error-text" style={{ color: 'red' }}>Error: {error}</p>}
+    
+    </article>
     </div>
   );
 }
