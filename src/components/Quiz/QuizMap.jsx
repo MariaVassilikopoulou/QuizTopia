@@ -2,54 +2,49 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { getQuizDetails } from '../../utils/api'; 
 
 function QuizMap() {
-  const { quizId } = useParams();
+  const { quizId, userId } = useParams();
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [mapCenter, setMapCenter] = useState([59.3293, 18.0686]); 
+  const [mapCenter, setMapCenter] = useState([57.7089, 11.9746])
 
   useEffect(() => {
     const fetchQuizDetails = async () => {
-      const token = sessionStorage.getItem('token');
-      const userId = sessionStorage.getItem('userId');
-
-      if (!token || !userId) {
-        console.error("No authentication token or user ID found");
-        setError('No authentication token or user ID found');
-        setLoading(false);
+      const token = sessionStorage.getItem("token");
+  
+      if (!token || !userId || !quizId) {
+        console.error("Missing required parameters");
+        setLoading(false); 
         return;
       }
 
       try {
-        const quizData = await getQuizDetails(userId, quizId);
+        const url = `https://fk7zu3f4gj.execute-api.eu-north-1.amazonaws.com/quiz/${userId}/${quizId}`; 
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-        if (quizData.success && quizData.quiz) {
-          const questions = quizData.quiz.questions || [];
-          setQuestions(questions);
-
-          if (questions.length > 0) {
-            const firstQuestion = questions[0];
-            const { latitude, longitude } = firstQuestion.location || {};
-            if (latitude && longitude) {
-              setMapCenter([parseFloat(latitude), parseFloat(longitude)]);
-            }
-          }
-        } else {
-          throw new Error('Invalid quiz data received');
+        if (!response.ok) {
+          throw new Error("Failed to fetch quiz details");
         }
-      } catch (err) {
-        console.error("Failed to fetch quiz details:", err);
-        setError(err.message);
+
+        const quizData = await response.json();
+        setQuestions(quizData.quiz.questions || []);
+      } catch (error) {
+        console.error("Error fetching quiz details:", error);
+        setError(error.message); 
       } finally {
-        setLoading(false);
+        setLoading(false); 
       }
     };
 
     fetchQuizDetails();
-  }, [quizId]);
+  }, [quizId, userId]); 
 
   if (loading) {
     return <div>Loading questions...</div>;
@@ -60,7 +55,7 @@ function QuizMap() {
   }
 
   return (
-    <MapContainer center={mapCenter} zoom={13} style={{ height: '100vh', width: '100%' }}>
+    <MapContainer center={mapCenter} zoom={10} style={{ height: '100vh', width: '100%' }}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

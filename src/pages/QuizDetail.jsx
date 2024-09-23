@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect} from "react";
 import MapComponent from "../components/Map/MapComponent";
-import { getQuizDetails, addQuestionToQuiz } from "../utils/api";
+import {  getQuizDetails, addQuestionToQuiz } from "../utils/api";
 
 function QuizDetail() {
   const { quizId } = useParams();
@@ -11,8 +11,12 @@ function QuizDetail() {
   const [userId, setUserId] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
 
 const navigate= useNavigate();
+
   const addQuestionHandler = async () => {
     if (!latitude || !longitude) {
       alert("Please click on the map to select a location.");
@@ -64,17 +68,20 @@ const navigate= useNavigate();
   useEffect(() => {
     const fetchQuizDetails = async () => {
       const token = sessionStorage.getItem("token");
-      const storedUserId = sessionStorage.getItem("userId");
+      const userId = sessionStorage.getItem("userId");
 
-      if (!token || !storedUserId) {
+      if (!token || !userId) {
         console.error("No token or userId found in session storage.");
+        setError("No token or userId found");
+        setLoading(false);
         return;
       }
 
-      try {
-        const quizData = await getQuizDetails(storedUserId, quizId);
+     try {
+       const quizData = await getQuizDetails(userId, quizId);
+     
         setQuestions(quizData.quiz.questions || []);
-        setUserId(storedUserId);
+        setUserId(userId);
         setQuestion("");
         setAnswer("");
       } catch (err) {
@@ -82,8 +89,11 @@ const navigate= useNavigate();
       }
     };
 
-    fetchQuizDetails();
-  }, [quizId]);
+   
+fetchQuizDetails();
+}, [quizId]);
+
+
 
   const handleMapClick = (coords) => {
     setLatitude(coords.latitude);

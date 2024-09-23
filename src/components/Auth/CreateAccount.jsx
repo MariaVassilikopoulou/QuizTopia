@@ -17,7 +17,7 @@ export default function CreateAccount() {
         
         try {
            
-            const response = await fetch('https://a1voqdpubd.execute-api.eu-north-1.amazonaws.com/auth/signup', {
+            const response = await fetch('https://fk7zu3f4gj.execute-api.eu-north-1.amazonaws.com/auth/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

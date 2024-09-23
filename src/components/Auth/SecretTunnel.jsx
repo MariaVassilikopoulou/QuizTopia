@@ -11,7 +11,7 @@ export default function SecretTunnel({ children }) {
             const token = sessionStorage.getItem('token') || '';
             if (token.length > 0) {
                 try {
-                    const response = await fetch('https://a1voqdpubd.execute-api.eu-north-1.amazonaws.com/account', {
+                    const response = await fetch('https://fk7zu3f4gj.execute-api.eu-north-1.amazonaws.com/account', {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',

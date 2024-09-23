@@ -14,12 +14,14 @@ export default function Login() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const userData = { username, password };
-        const API_URL = "https://a1voqdpubd.execute-api.eu-north-1.amazonaws.com/auth/login";
+        const token = sessionStorage.getItem('token');
+        const API_URL = "https://fk7zu3f4gj.execute-api.eu-north-1.amazonaws.com/auth/login";
         try {
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    Authorization: token ? `Bearer ${token}` : ' ',
                 },
                 body: JSON.stringify(userData)
             });
